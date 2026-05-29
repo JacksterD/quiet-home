@@ -196,10 +196,10 @@
     color: var(--ink-soft);
   }
 
-  /* ---- the tiny edit affordance ---- */
-  .edit-toggle {
+  /* ---- the tiny corner affordances ---- */
+  .edit-toggle, .explore-toggle {
     position: fixed;
-    bottom: 18px; right: 20px;
+    bottom: 18px;
     font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 0.18em;
@@ -211,7 +211,9 @@
     opacity: 0.4;
     transition: opacity 0.3s ease, color 0.3s ease;
   }
-  .edit-toggle:hover { opacity: 1; color: var(--brass); }
+  .edit-toggle { right: 20px; }
+  .explore-toggle { left: 20px; }
+  .edit-toggle:hover, .explore-toggle:hover { opacity: 1; color: var(--brass); }
 
   /* ---- settings panel ---- */
   .panel {
@@ -274,6 +276,22 @@
   .btn.primary { background: var(--brass); border-color: var(--brass); color: #15110a; font-weight: 600; }
   .btn.primary:hover { filter: brightness(1.08); }
 
+  /* ---- "worth a wander" overlay: a quiet list of places ---- */
+  .explore-list { display: flex; flex-direction: column; gap: 20px; }
+  .explore-item a {
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 19px;
+    transition: color 0.25s ease;
+  }
+  .explore-item a:hover { color: var(--brass); }
+  .explore-item .desc {
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.5;
+    margin-top: 3px;
+  }
+
   /* gentle staggered fade-in on load */
   .fade { opacity: 0; transform: translateY(8px); animation: rise 0.9s cubic-bezier(.2,.7,.2,1) forwards; }
   .fade.d1 { animation-delay: 0.05s; }
@@ -303,7 +321,16 @@
 
   <div class="footer-line" id="footer">&nbsp;</div>
 
+  <button class="explore-toggle" id="exploreToggle">explore</button>
   <button class="edit-toggle" id="editToggle">edit</button>
+
+  <!-- "worth a wander" overlay -->
+  <div class="panel" id="explore">
+    <div class="panel-inner">
+      <h2>Worth a wander</h2>
+      <div class="explore-list" id="exploreList"></div>
+    </div>
+  </div>
 
   <!-- settings panel -->
   <div class="panel" id="panel">
@@ -395,6 +422,23 @@
     { name: "Notes",    url: "https://notes.icloud.com" }
   ];
 
+  // Places worth a wander — the quieter, human end of the web. Shown in the
+  // "explore" overlay. Baked in; edit here by hand.
+  const EXPLORE_LINKS = [
+    { name: "Marginalia",          url: "https://search.marginalia.nu",      desc: "A search engine for the quiet, non-commercial web." },
+    { name: "Wiby",                url: "https://wiby.me",                    desc: "Finds classic, simple pages made by people, not companies." },
+    { name: "Kagi Small Web",      url: "https://kagi.com/smallweb",          desc: "Fresh posts from personal blogs and the small web." },
+    { name: "Internet Archive",    url: "https://archive.org",                desc: "Millions of free books, films, programs, and saved web pages." },
+    { name: "Project Gutenberg",   url: "https://www.gutenberg.org",          desc: "Over 70,000 free ebooks, out of copyright." },
+    { name: "The Public Domain Review", url: "https://publicdomainreview.org", desc: "Curiosities and artworks from the public domain." },
+    { name: "The Marginalian",     url: "https://www.themarginalian.org",     desc: "Maria Popova on art, science, and how to live." },
+    { name: "Low-tech Magazine",   url: "https://solar.lowtechmagazine.com",  desc: "A solar-powered magazine on sustainable technology." },
+    { name: "Are.na",              url: "https://www.are.na",                 desc: "Calm, ad-free visual research and collecting." },
+    { name: "Neocities",           url: "https://neocities.org",              desc: "Make a personal website, in the spirit of the early web." },
+    { name: "Gwern",               url: "https://gwern.net",                  desc: "Long-form, long-term essays on science and technology." },
+    { name: "Wikipedia",           url: "https://en.wikipedia.org",           desc: "The free encyclopedia." }
+  ];
+
   // ---- Render --------------------------------------------------------------
 
   // Greeting depends on the hour, so the page meets you where the day is.
@@ -432,6 +476,30 @@
     });
   }
 
+  // Build the "worth a wander" list once: a link plus a quiet description each.
+  function renderExplore() {
+    const list = document.getElementById("exploreList");
+    list.innerHTML = "";
+    EXPLORE_LINKS.forEach(function (item) {
+      if (!item.name || !item.url) return;
+      const wrap = document.createElement("div");
+      wrap.className = "explore-item";
+      const a = document.createElement("a");
+      a.href = item.url;
+      a.textContent = item.name;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      wrap.appendChild(a);
+      if (item.desc) {
+        const d = document.createElement("div");
+        d.className = "desc";
+        d.textContent = item.desc;
+        wrap.appendChild(d);
+      }
+      list.appendChild(wrap);
+    });
+  }
+
   function renderNote() {
     const notes = config.notes.filter(Boolean);
     const footer = document.getElementById("footer");
@@ -461,6 +529,7 @@
     renderClock();
     renderGreeting();
     renderLinks();
+    renderExplore();
     renderNote();
   }
 
@@ -556,9 +625,23 @@
     closePanel();
   });
 
-  // close the panel by clicking the dimmed backdrop or pressing Escape
+  // close the settings panel by clicking the dimmed backdrop
   panel.addEventListener("click", function (e) { if (e.target === panel) closePanel(); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closePanel(); });
+
+  // ---- Explore overlay -----------------------------------------------------
+  const explore = document.getElementById("explore");
+  function closeExplore() { explore.classList.remove("open"); }
+  document.getElementById("exploreToggle").addEventListener("click", function () {
+    explore.classList.add("open");
+  });
+  explore.addEventListener("click", function (e) { if (e.target === explore) closeExplore(); });
+
+  // Escape closes whichever overlay is open
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (panel.classList.contains("open")) closePanel();
+    if (explore.classList.contains("open")) closeExplore();
+  });
 
   // ---- Go ------------------------------------------------------------------
   renderAll();
