@@ -151,27 +151,16 @@
   }
   .search::placeholder { color: var(--ink-faint); font-style: italic; }
 
-  /* ---- the links: "your web", in quiet labelled groups ---- */
+  /* ---- the links: quiet centered rows, middot-separated ---- */
   .links {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 22px;
+    gap: 14px;
     max-width: 760px;
   }
-  .link-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 9px;
-  }
-  .group-label { /* uses .label styling too */ }
-  .group-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px 32px;
-  }
+  .link-row { text-align: center; line-height: 1.9; }
+  .link-row .sep { color: var(--ink-faint); padding: 0 0.5em; }
   .links a {
     color: var(--ink-soft);
     text-decoration: none;
@@ -207,19 +196,14 @@
   }
   .more-toggle:hover { opacity: 1; color: var(--brass); }
 
-  /* the revealed groups: collapsed by default, easing open on request */
+  /* the revealed row: collapsed by default, easing open on request */
   .more-links {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 22px;
-    width: 100%;
     max-height: 0;
     opacity: 0;
     overflow: hidden;
-    transition: max-height 0.5s ease, opacity 0.4s ease;
+    transition: max-height 0.45s ease, opacity 0.35s ease;
   }
-  .more-links.open { max-height: 600px; opacity: 1; }
+  .more-links.open { max-height: 120px; opacity: 1; }
 
   /* ---- footer: a single quiet line, not a feed ---- */
   .footer-line {
@@ -430,25 +414,21 @@
   let config = loadConfig();
 
   // ---- Links ---------------------------------------------------------------
-  // Baked in for now (not edited via the panel): a small set of doors you walk
-  // through on purpose, in three quiet groups. The first group is always shown;
-  // a "more" toggle reveals the rest. Edit these by hand, right here.
-  const LINK_GROUPS = [
-    { label: "Today", links: [
-      { name: "Calendar", url: "https://calendar.google.com" },
-      { name: "Mail",     url: "https://mail.google.com" },
-      { name: "Notes",    url: "https://notes.icloud.com" }
-    ]},
-    { label: "Read", links: [
-      { name: "Wikipedia",        url: "https://en.wikipedia.org" },
-      { name: "Internet Archive", url: "https://archive.org" },
-      { name: "Small Web",        url: "https://search.marginalia.nu" }
-    ]},
-    { label: "Local", links: [
-      { name: "Weather",   url: "https://www.bbc.co.uk/weather" },
-      { name: "Maps",      url: "https://www.google.com/maps" },
-      { name: "Transport", url: "https://www.realtimetrains.co.uk" }
-    ]}
+  // Baked in (not edited via the panel): a small set of doors you walk through
+  // on purpose. The primary row is always shown; a quiet "more" reveals the rest
+  // on one further line. Edit these by hand, right here.
+  const PRIMARY_LINKS = [
+    { name: "Calendar", url: "https://calendar.google.com" },
+    { name: "Mail",     url: "https://mail.google.com" },
+    { name: "Notes",    url: "https://notes.icloud.com" }
+  ];
+  const MORE_LINKS = [
+    { name: "Wikipedia",        url: "https://en.wikipedia.org" },
+    { name: "Internet Archive", url: "https://archive.org" },
+    { name: "Small Web",        url: "https://search.marginalia.nu" },
+    { name: "Weather",          url: "https://www.bbc.co.uk/weather" },
+    { name: "Maps",             url: "https://www.google.com/maps" },
+    { name: "Transport",        url: "https://www.realtimetrains.co.uk" }
   ];
 
   // ---- Render --------------------------------------------------------------
@@ -476,39 +456,35 @@
       greetingFor(hour) + who + '<span class="dot">.</span>';
   }
 
-  // Build one labelled group (a quiet mono caption above its row of links).
-  function groupEl(group) {
-    const wrap = document.createElement("div");
-    wrap.className = "link-group";
-    const label = document.createElement("div");
-    label.className = "group-label label";
-    label.textContent = group.label;
-    wrap.appendChild(label);
+  // Build one centered line of links, separated by faint middots.
+  function linkRow(links) {
     const row = document.createElement("div");
-    row.className = "group-links";
-    group.links.forEach(function (link) {
+    row.className = "link-row";
+    links.forEach(function (link, i) {
       if (!link.name || !link.url) return;
+      if (i > 0) {
+        const sep = document.createElement("span");
+        sep.className = "sep";
+        sep.textContent = "·";
+        row.appendChild(sep);
+      }
       const a = document.createElement("a");
       a.href = link.url;
       a.textContent = link.name;
       row.appendChild(a);
     });
-    wrap.appendChild(row);
-    return wrap;
+    return row;
   }
 
   function renderLinks() {
     const nav = document.getElementById("links");
     nav.innerHTML = "";
-    if (!LINK_GROUPS.length) return;
 
-    // first group is always visible
-    nav.appendChild(groupEl(LINK_GROUPS[0]));
+    // the primary line is always shown
+    nav.appendChild(linkRow(PRIMARY_LINKS));
+    if (!MORE_LINKS.length) return;
 
-    const rest = LINK_GROUPS.slice(1);
-    if (!rest.length) return;
-
-    // a quiet toggle reveals the remaining groups (collapsed by default)
+    // a quiet toggle eases the rest open on one further line (collapsed by default)
     const toggle = document.createElement("button");
     toggle.className = "more-toggle";
     toggle.textContent = "more";
@@ -516,7 +492,7 @@
 
     const more = document.createElement("div");
     more.className = "more-links";
-    rest.forEach(function (g) { more.appendChild(groupEl(g)); });
+    more.appendChild(linkRow(MORE_LINKS));
     nav.appendChild(more);
 
     toggle.addEventListener("click", function () {
