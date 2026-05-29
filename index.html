@@ -381,12 +381,6 @@
         <div class="hint">A quiet colour shift. Previewed as you choose; Cancel keeps the old one.</div>
       </div>
 
-      <div class="field">
-        <span class="label">Quiet lines</span>
-        <textarea id="setNotes" spellcheck="false"></textarea>
-        <div class="hint">One per line, as “Quote.” — Author. A different one shows each load.</div>
-      </div>
-
       <div class="panel-actions">
         <button class="btn" id="cancelBtn">Cancel</button>
         <button class="btn primary" id="saveBtn">Save</button>
@@ -404,7 +398,8 @@
     name: "Jack",
     searchUrl: "https://duckduckgo.com/?q=",
     theme: "night",   // night (default) | day | ember
-    // Human quotes, each attributed in the text. Edit freely via the panel.
+    // Human quotes, each attributed in the text. Baked in; edit here by hand.
+    // One is shown at random each load.
     notes: [
       "“Less, but better.” — Dieter Rams",
       "“Attention is the beginning of devotion.” — Mary Oliver",
@@ -628,7 +623,6 @@
     document.getElementById("setName").value = config.name;
     document.getElementById("setSearch").value = config.searchUrl;
     document.getElementById("setTheme").value = config.theme;
-    document.getElementById("setNotes").value = config.notes.join("\n");
     panel.classList.add("open");
   }
   // Closing without saving reverts any live palette preview to the saved one.
@@ -650,7 +644,6 @@
     config.name = document.getElementById("setName").value.trim();
     config.searchUrl = document.getElementById("setSearch").value;
     config.theme = document.getElementById("setTheme").value;
-    config.notes = document.getElementById("setNotes").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
     saveConfig(config);
     renderAll();
     closePanel();

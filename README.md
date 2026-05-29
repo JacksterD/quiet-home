@@ -56,10 +56,11 @@ better") and a dark, Farrow & Ball-ish palette.
   `<script>`) and edited there by hand — they are not currently managed from the
   edit panel.
 - **Rotating quotes** — one human, attributed quote shown at random each load. The
-  author is rendered as a quiet upright credit after the line.
+  author is rendered as a quiet upright credit after the line. The quotes are baked
+  into the file (the `notes` array in `defaults`) and edited there by hand.
 - **Edit panel** — an unobtrusive "edit" control (bottom-right) opens a settings
-  modal to change name, search engine, palette, and quotes. Closes on Escape or
-  backdrop click. (Links are baked in, so they're not in this panel.)
+  modal to change name, search engine, and palette. Closes on Escape or backdrop
+  click. (Links and quotes are baked in, so they're not in this panel.)
 
 ## Design language
 
