@@ -32,7 +32,11 @@ better") and a dark, Farrow & Ball-ish palette.
   midnight), personalised with the user's name.
 - **Quiet search** — a minimal underline field that submits to a chosen engine.
   Privacy-respecting options included: DuckDuckGo (default), Kagi, Startpage,
-  Brave, Ecosia, and Google.
+  Brave, Ecosia, and Google. The field is **focused on load** (so you can type
+  immediately) and is **URL-aware**: type a bare web address like `github.com`
+  and Enter goes straight there, while anything with spaces (or no domain) is
+  searched. Note: a web page cannot focus the *browser's* address bar — that's
+  reserved to the browser — so focusing this field is the in-page equivalent.
 - **Bang routing** — prefix a single query with a `!bang` to send just that one
   query somewhere other than your default, without changing the default. No bang
   (or an unrecognised one) falls through to the chosen engine. Supported:
@@ -45,12 +49,18 @@ better") and a dark, Farrow & Ball-ish palette.
   was trialled but removed: Claude.ai now shows a session-hijack warning on any
   externally-supplied `?q=` prefill — a deliberate anti-prompt-injection measure —
   which makes it a poor fit for a one-keystroke launcher.)
-- **Curated links** — a small row of text links ("your web"), no icons.
+- **Curated links** — text links ("your web"), no icons, arranged in small
+  labelled groups. The first group (**Today**) is always shown; a quiet "more"
+  toggle gently reveals the rest (**Read**, **Local**), collapsed by default. The
+  groups are baked into the file (a `LINK_GROUPS` constant near the top of the
+  `<script>`) and edited there by hand — they are not currently managed from the
+  edit panel.
 - **Rotating quotes** — one human, attributed quote shown at random each load. The
-  author is rendered as a quiet upright credit after the line.
+  author is rendered as a quiet upright credit after the line. The quotes are baked
+  into the file (the `notes` array in `defaults`) and edited there by hand.
 - **Edit panel** — an unobtrusive "edit" control (bottom-right) opens a settings
-  modal to change name, search engine, links, and quotes. Closes on Escape or
-  backdrop click.
+  modal to change name, search engine, and palette. Closes on Escape or backdrop
+  click. (Links and quotes are baked in, so they're not in this panel.)
 
 ## Design language
 
@@ -77,14 +87,16 @@ better") and a dark, Farrow & Ball-ish palette.
 - **Important:** `localStorage` is per-origin and per-device. Hosting the page once
   does **not** sync edits between, say, a Mac and an iPhone — each browser keeps its
   own copy. The intended pattern for a single canonical setup is therefore to bake
-  the real links/quotes/name straight into the `defaults` object and host that; the
-  edit panel is then optional per-device tinkering.
+  the real quotes/name straight into the `defaults` object (and the links into
+  `LINK_GROUPS`) and host that; the edit panel is then optional per-device tinkering.
 
 ## Current defaults
 
 - **Name:** Jack
 - **Search:** DuckDuckGo (default); also Kagi, Startpage, Brave, Ecosia, Google.
-- **Links:** Mail (Gmail), Calendar (Google Calendar), Notion, Wikipedia.
+- **Links:** three groups — **Today** (Calendar, Mail, Notes), **Read**
+  (Wikipedia, Internet Archive, Small Web), **Local** (Weather, Maps, Transport).
+  Only Today is shown until "more" is pressed.
 - **Quotes:** nine attributed human quotes (Rams, Mary Oliver, Annie Dillard,
   Georgia O'Keeffe, Dorothea Lange, Thoreau, David Lynch, Tim Berners-Lee,
   Simone Weil).
@@ -124,7 +136,6 @@ loads directly at the subdomain with no path suffix.
 - **Config export/import** (copy a JSON blob, or a URL-encoded config) to move a
   setup between devices without retyping — the cleanest answer to the per-device
   `localStorage` limitation.
-- **Auto-focus the search field** on load for keyboard-first use.
 - A small **keyboard shortcut** to open the edit panel.
 
 ## Running locally
