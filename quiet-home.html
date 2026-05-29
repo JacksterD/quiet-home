@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home</title>
+<style>
+  /* ---------------------------------------------------------------
+     Quiet Home — a calm browser homepage.
+     No feeds, no tracking, no network calls. Everything lives in this
+     one file. Your links and settings are saved locally in your
+     browser only. Nothing leaves the device.
+
+     Palette is borrowed from the deep Farrow & Ball end of things —
+     an Inchyra/Hague near-black with a warm brass accent.
+  ----------------------------------------------------------------*/
+
+  :root {
+    --bg:        #14201f;   /* deep blue-green, near black */
+    --bg-deep:   #0d1716;   /* used for the vignette edges */
+    --ink:       #e8e2d4;   /* warm off-white text */
+    --ink-soft:  #9aa39a;   /* muted secondary text */
+    --ink-faint: #5d665e;   /* faintest labels */
+    --brass:     #c6a15b;   /* the one accent */
+    --line:      rgba(198,161,91,0.22);
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Hoefler Text", Georgia, serif;
+    --mono:  "SF Mono", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    /* a soft vignette gives the page some depth and quiet */
+    background-image: radial-gradient(120% 90% at 50% 35%, var(--bg) 0%, var(--bg-deep) 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6vh 24px;
+    position: relative;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* very subtle film grain, drawn inline so there is no network request */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* small label style — letter-spaced mono, the "instrument panel" feel */
+  .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ---- the clock, sitting quietly at the top ---- */
+  .clock {
+    font-family: var(--mono);
+    color: var(--ink-soft);
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 9vh;
+  }
+  .clock .time { color: var(--ink); }
+
+  /* ---- the greeting ---- */
+  .greeting {
+    font-size: clamp(34px, 6vw, 64px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-align: center;
+    margin-bottom: 5vh;
+  }
+  .greeting .dot { color: var(--brass); }
+
+  /* ---- the quiet search ---- */
+  .search-wrap {
+    width: min(520px, 90vw);
+    margin-bottom: 9vh;
+    border-bottom: 1px solid var(--line);
+    transition: border-color 0.4s ease;
+  }
+  .search-wrap:focus-within { border-color: var(--brass); }
+  .search {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 19px;
+    padding: 10px 2px;
+    text-align: center;
+  }
+  .search::placeholder { color: var(--ink-faint); font-style: italic; }
+
+  /* ---- the links: "your web" ---- */
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 40px;
+    max-width: 760px;
+  }
+  .links a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 18px;
+    position: relative;
+    transition: color 0.25s ease;
+  }
+  .links a::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 100%;
+    bottom: -3px;
+    height: 1px;
+    background: var(--brass);
+    transition: right 0.3s ease;
+  }
+  .links a:hover { color: var(--ink); }
+  .links a:hover::after { right: 0; }
+
+  /* ---- footer: a single quiet line, not a feed ---- */
+  .footer-line {
+    position: fixed;
+    bottom: 38px;
+    left: 0; right: 0;
+    text-align: center;
+    color: var(--ink-faint);
+    font-style: italic;
+    font-size: 15px;
+    padding: 0 24px;
+    transition: opacity 0.6s ease;
+  }
+  /* the attribution sits as a quiet, upright credit after the quote */
+  .footer-line .cite {
+    font-style: normal;
+    color: var(--ink-soft);
+  }
+
+  /* ---- the tiny edit affordance ---- */
+  .edit-toggle {
+    position: fixed;
+    bottom: 18px; right: 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.3s ease, color 0.3s ease;
+  }
+  .edit-toggle:hover { opacity: 1; color: var(--brass); }
+
+  /* ---- settings panel ---- */
+  .panel {
+    position: fixed;
+    inset: 0;
+    background: rgba(8,14,13,0.72);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 10;
+  }
+  .panel.open { display: flex; }
+  .panel-inner {
+    width: min(560px, 100%);
+    max-height: 86vh;
+    overflow-y: auto;
+    background: var(--bg-deep);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 34px 34px 28px;
+  }
+  .panel h2 {
+    font-weight: 400;
+    font-size: 24px;
+    margin-bottom: 22px;
+  }
+  .field { margin-bottom: 22px; }
+  .field > .label { display: block; margin-bottom: 8px; }
+  .field input, .field textarea, .field select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 16px;
+    padding: 10px 12px;
+    outline: none;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--brass); }
+  .field textarea { resize: vertical; min-height: 96px; line-height: 1.6; font-family: var(--mono); font-size: 14px; }
+  .hint { color: var(--ink-faint); font-size: 12px; margin-top: 6px; font-family: var(--mono); letter-spacing: 0.02em; }
+  .panel-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 6px; }
+  .btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 11px 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    transition: all 0.25s ease;
+  }
+  .btn:hover { color: var(--ink); border-color: var(--ink-soft); }
+  .btn.primary { background: var(--brass); border-color: var(--brass); color: #15110a; font-weight: 600; }
+  .btn.primary:hover { filter: brightness(1.08); }
+
+  /* gentle staggered fade-in on load */
+  .fade { opacity: 0; transform: translateY(8px); animation: rise 0.9s cubic-bezier(.2,.7,.2,1) forwards; }
+  .fade.d1 { animation-delay: 0.05s; }
+  .fade.d2 { animation-delay: 0.18s; }
+  .fade.d3 { animation-delay: 0.32s; }
+  .fade.d4 { animation-delay: 0.46s; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  @media (max-width: 520px) {
+    .clock { margin-bottom: 6vh; }
+    .links { gap: 8px 28px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="clock fade d1" id="clock">—</div>
+
+  <h1 class="greeting fade d2" id="greeting">Hello<span class="dot">.</span></h1>
+
+  <div class="search-wrap fade d3">
+    <input class="search" id="search" type="text" autocomplete="off" spellcheck="false"
+           placeholder="search, quietly" aria-label="Search">
+  </div>
+
+  <nav class="links fade d4" id="links"></nav>
+
+  <div class="footer-line" id="footer">&nbsp;</div>
+
+  <button class="edit-toggle" id="editToggle">edit</button>
+
+  <!-- settings panel -->
+  <div class="panel" id="panel">
+    <div class="panel-inner">
+      <h2>Make it yours</h2>
+
+      <div class="field">
+        <span class="label">Your name</span>
+        <input id="setName" type="text" placeholder="Jack">
+      </div>
+
+      <div class="field">
+        <span class="label">Search engine</span>
+        <select id="setSearch">
+          <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
+          <option value="https://kagi.com/search?q=">Kagi</option>
+          <option value="https://www.startpage.com/sp/search?query=">Startpage</option>
+          <option value="https://search.brave.com/search?q=">Brave</option>
+          <option value="https://www.ecosia.org/search?q=">Ecosia</option>
+          <option value="https://www.google.com/search?q=">Google</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <span class="label">Your web</span>
+        <textarea id="setLinks" spellcheck="false"></textarea>
+        <div class="hint">One per line, as &nbsp;Name | https://url</div>
+      </div>
+
+      <div class="field">
+        <span class="label">Quiet lines</span>
+        <textarea id="setNotes" spellcheck="false"></textarea>
+        <div class="hint">One per line, as “Quote.” — Author. A different one shows each load.</div>
+      </div>
+
+      <div class="panel-actions">
+        <button class="btn" id="cancelBtn">Cancel</button>
+        <button class="btn primary" id="saveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ---- Storage -------------------------------------------------------------
+  // Everything is kept in this browser only, under one key. No accounts, no sync.
+  const STORE_KEY = "quiet_home_v1";
+
+  // Sensible starting point. All of this is editable via the "edit" button.
+  const defaults = {
+    name: "Jack",
+    searchUrl: "https://duckduckgo.com/?q=",
+    links: [
+      { name: "Mail",     url: "https://mail.google.com" },
+      { name: "Calendar", url: "https://calendar.google.com" },
+      { name: "Notion",   url: "https://notion.so" },
+      { name: "Wikipedia", url: "https://en.wikipedia.org" }
+    ],
+    // Human quotes, each attributed in the text. Edit freely via the panel.
+    notes: [
+      "“Less, but better.” — Dieter Rams",
+      "“Attention is the beginning of devotion.” — Mary Oliver",
+      "“How we spend our days is, of course, how we spend our lives.” — Annie Dillard",
+      "“To see takes time.” — Georgia O’Keeffe",
+      "“The camera teaches you how to see without a camera.” — Dorothea Lange",
+      "“Simplify, simplify.” — Henry David Thoreau",
+      "“Ideas are like fish.” — David Lynch",
+      "“This is for everyone.” — Tim Berners-Lee",
+      "“Attention is the rarest and purest form of generosity.” — Simone Weil"
+    ]
+  };
+
+  // Load saved config, falling back to defaults if nothing is stored yet.
+  function loadConfig() {
+    try {
+      const saved = localStorage.getItem(STORE_KEY);
+      return saved ? Object.assign({}, defaults, JSON.parse(saved)) : Object.assign({}, defaults);
+    } catch (e) {
+      return Object.assign({}, defaults);
+    }
+  }
+
+  function saveConfig(cfg) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(cfg)); } catch (e) {}
+  }
+
+  let config = loadConfig();
+
+  // ---- Render --------------------------------------------------------------
+
+  // Greeting depends on the hour, so the page meets you where the day is.
+  function greetingFor(hour) {
+    if (hour < 5)  return "Still up";
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  }
+
+  function renderClock() {
+    const now = new Date();
+    const time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+    const date = now.toLocaleDateString([], { weekday: "long", day: "numeric", month: "long" });
+    document.getElementById("clock").innerHTML =
+      '<span class="time">' + time + '</span> &nbsp;·&nbsp; ' + date;
+  }
+
+  function renderGreeting() {
+    const hour = new Date().getHours();
+    const who = config.name ? (", " + config.name) : "";
+    document.getElementById("greeting").innerHTML =
+      greetingFor(hour) + who + '<span class="dot">.</span>';
+  }
+
+  function renderLinks() {
+    const nav = document.getElementById("links");
+    nav.innerHTML = "";
+    config.links.forEach(function (link) {
+      if (!link.name || !link.url) return;
+      const a = document.createElement("a");
+      a.href = link.url;
+      a.textContent = link.name;
+      nav.appendChild(a);
+    });
+  }
+
+  function renderNote() {
+    const notes = config.notes.filter(Boolean);
+    const footer = document.getElementById("footer");
+    if (!notes.length) { footer.textContent = ""; return; }
+    // pick one at random each load — a small, finite, calm rotation
+    const note = notes[Math.floor(Math.random() * notes.length)];
+    // split a "quote — author" line so the attribution reads as a quiet credit
+    const parts = note.split(" — ");
+    if (parts.length > 1) {
+      const author = parts.pop();
+      const quote = parts.join(" — ");
+      footer.innerHTML = quote + ' <span class="cite">— ' + author + "</span>";
+    } else {
+      footer.textContent = note;
+    }
+  }
+
+  function renderAll() {
+    renderClock();
+    renderGreeting();
+    renderLinks();
+    renderNote();
+  }
+
+  // ---- Search --------------------------------------------------------------
+  document.getElementById("search").addEventListener("keydown", function (e) {
+    if (e.key !== "Enter") return;
+    const q = e.target.value.trim();
+    if (q) window.location.href = config.searchUrl + encodeURIComponent(q);
+  });
+
+  // ---- Settings panel ------------------------------------------------------
+  const panel = document.getElementById("panel");
+
+  // Convert the links array to/from the simple "Name | url" text format.
+  function linksToText(links) {
+    return links.map(function (l) { return l.name + " | " + l.url; }).join("\n");
+  }
+  function textToLinks(text) {
+    return text.split("\n").map(function (line) {
+      const parts = line.split("|");
+      if (parts.length < 2) return null;
+      return { name: parts[0].trim(), url: parts.slice(1).join("|").trim() };
+    }).filter(function (l) { return l && l.name && l.url; });
+  }
+
+  function openPanel() {
+    document.getElementById("setName").value = config.name;
+    document.getElementById("setSearch").value = config.searchUrl;
+    document.getElementById("setLinks").value = linksToText(config.links);
+    document.getElementById("setNotes").value = config.notes.join("\n");
+    panel.classList.add("open");
+  }
+  function closePanel() { panel.classList.remove("open"); }
+
+  document.getElementById("editToggle").addEventListener("click", openPanel);
+  document.getElementById("cancelBtn").addEventListener("click", closePanel);
+
+  document.getElementById("saveBtn").addEventListener("click", function () {
+    config.name = document.getElementById("setName").value.trim();
+    config.searchUrl = document.getElementById("setSearch").value;
+    config.links = textToLinks(document.getElementById("setLinks").value);
+    config.notes = document.getElementById("setNotes").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+    saveConfig(config);
+    renderAll();
+    closePanel();
+  });
+
+  // close the panel by clicking the dimmed backdrop or pressing Escape
+  panel.addEventListener("click", function (e) { if (e.target === panel) closePanel(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closePanel(); });
+
+  // ---- Go ------------------------------------------------------------------
+  renderAll();
+  setInterval(renderClock, 15000); // refresh the minute, no anxious ticking seconds
+</script>
+</body>
+</html>
