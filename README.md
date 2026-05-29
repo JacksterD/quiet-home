@@ -16,9 +16,13 @@ better") and a dark, Farrow & Ball-ish palette.
   site root; it remains one droppable file.)
 - **Vanilla** HTML, CSS and JavaScript only.
 - **Zero network calls.** No web fonts, no CDN, no favicons fetched from third
-  parties, no analytics. The grain texture is an inline SVG data URI; fonts are
-  system fonts. This is a feature, not a shortcut — it keeps the page instant,
-  private, and silent.
+  parties, no analytics. The grain texture *and the favicon* are inline SVG data
+  URIs; fonts are system fonts. This is a feature, not a shortcut — it keeps the
+  page instant, private, and silent.
+- **Favicon** — the brass dot from "Hello." on the page's near-black, embedded as
+  an inline SVG data URI in the `<head>`. No `.ico` file, no request. (SVG
+  favicons render in current Chrome, Edge, Firefox and Safari; older browsers
+  simply fall back to the default — a graceful, no-cost degradation.)
 
 ## Features
 
