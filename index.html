@@ -276,8 +276,18 @@
   .btn.primary { background: var(--brass); border-color: var(--brass); color: #15110a; font-weight: 600; }
   .btn.primary:hover { filter: brightness(1.08); }
 
-  /* ---- "worth a wander" overlay: a quiet list of places ---- */
-  .explore-list { display: flex; flex-direction: column; gap: 20px; }
+  /* ---- "worth a wander" overlay: quiet places, sorted into sections ---- */
+  .explore-list { display: flex; flex-direction: column; gap: 30px; }
+  .explore-group { display: flex; flex-direction: column; gap: 16px; }
+  .explore-group-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brass);
+    opacity: 0.85;
+  }
   .explore-item a {
     color: var(--ink);
     text-decoration: none;
@@ -476,27 +486,40 @@
     });
   }
 
-  // Build the "worth a wander" list once: a link plus a quiet description each.
+  // Build the "worth a wander" list: each category is a titled section of
+  // links, every link a name plus a quiet description.
   function renderExplore() {
     const list = document.getElementById("exploreList");
     list.innerHTML = "";
-    EXPLORE_LINKS.forEach(function (item) {
-      if (!item.name || !item.url) return;
-      const wrap = document.createElement("div");
-      wrap.className = "explore-item";
-      const a = document.createElement("a");
-      a.href = item.url;
-      a.textContent = item.name;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      wrap.appendChild(a);
-      if (item.desc) {
-        const d = document.createElement("div");
-        d.className = "desc";
-        d.textContent = item.desc;
-        wrap.appendChild(d);
+    EXPLORE_GROUPS.forEach(function (group) {
+      if (!group.links || !group.links.length) return;
+      const sec = document.createElement("section");
+      sec.className = "explore-group";
+      if (group.title) {
+        const h = document.createElement("h3");
+        h.className = "explore-group-title";
+        h.textContent = group.title;
+        sec.appendChild(h);
       }
-      list.appendChild(wrap);
+      group.links.forEach(function (item) {
+        if (!item.name || !item.url) return;
+        const wrap = document.createElement("div");
+        wrap.className = "explore-item";
+        const a = document.createElement("a");
+        a.href = item.url;
+        a.textContent = item.name;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        wrap.appendChild(a);
+        if (item.desc) {
+          const d = document.createElement("div");
+          d.className = "desc";
+          d.textContent = item.desc;
+          wrap.appendChild(d);
+        }
+        sec.appendChild(wrap);
+      });
+      list.appendChild(sec);
     });
   }
 
