@@ -58,6 +58,13 @@ better") and a dark, Farrow & Ball-ish palette.
 - **Edit panel** — an unobtrusive "edit" control (bottom-right) opens a settings
   modal to change name, search engine, and palette. Closes on Escape or backdrop
   click. (Links and quotes are baked in, so they're not in this panel.)
+- **Explore overlay** — a faint "explore" control (bottom-left, mirroring "edit")
+  opens a "Worth a wander" overlay: a curated, baked-in list of small-web / indie
+  places (Marginalia, Wiby, Internet Archive, The Marginalian, Low-tech Magazine,
+  Neocities, and more), each with a one-line description. It reuses the settings
+  panel's dimmed-backdrop pattern (Escape / backdrop to close), so it stays one
+  file with zero network calls. Links live in the `EXPLORE_LINKS` array and open
+  in a new tab. Edit them there by hand.
 
 ## Design language
 
