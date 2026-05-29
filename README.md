@@ -50,8 +50,8 @@ better") and a dark, Farrow & Ball-ish palette.
   externally-supplied `?q=` prefill — a deliberate anti-prompt-injection measure —
   which makes it a poor fit for a one-keystroke launcher.)
 - **Curated links** — a single quiet centered line of text links ("your web"),
-  middot-separated, no icons and no labels. Baked into the file (the `LINKS` array
-  near the top of the `<script>`) and edited there by hand, not from the edit panel.
+  spaced, no icons, no separators and no labels. Baked into the file (the `LINKS`
+  array near the top of the `<script>`) and edited there by hand, not the panel.
 - **Rotating quotes** — one human, attributed quote shown at random each load. The
   author is rendered as a quiet upright credit after the line. The quotes are baked
   into the file (the `notes` array in `defaults`) and edited there by hand.
