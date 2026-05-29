@@ -11,8 +11,9 @@ better") and a dark, Farrow & Ball-ish palette.
 
 ## What it is, technically
 
-- A **single self-contained `quiet-home.html` file**. No build step, no framework,
-  no package manager, no dependencies.
+- A **single self-contained `index.html` file**. No build step, no framework,
+  no package manager, no dependencies. (Served as `index.html` so it works at a
+  site root; it remains one droppable file.)
 - **Vanilla** HTML, CSS and JavaScript only.
 - **Zero network calls.** No web fonts, no CDN, no favicons fetched from third
   parties, no analytics. The grain texture is an inline SVG data URI; fonts are
@@ -78,12 +79,21 @@ If extending this, please keep the things that define it:
 4. **Privacy-first.** Nothing should leave the device. Config stays in local storage.
 5. **Restraint over features.** When in doubt, leave it out. The point is calm.
 
+## Deployment
+
+Published as a static site via **GitHub Pages** on the custom subdomain
+**`home.jackd.org`**. The `CNAME` file in the repo root sets the custom domain;
+the matching DNS record is a `CNAME` for `home.jackd.org` →
+`jacksterd.github.io`. Pages serves `index.html` at the site root, so the page
+loads directly at the subdomain with no path suffix.
+
 ## Roadmap / next steps
 
-- [ ] Initialise a git repo and push to GitHub.
-- [ ] Bake the canonical name, links, search engine and quotes into `defaults`.
-- [ ] Publish as a static site — GitHub Pages (ideally on a custom subdomain such as
-      `home.jackd.org`), or Netlify Drop / Cloudflare Pages.
+- [x] Initialise a git repo and push to GitHub.
+- [x] Bake the canonical name, links, search engine and quotes into `defaults`
+      (the shipped `defaults` are the canonical setup).
+- [x] Publish as a static site — GitHub Pages on the custom subdomain
+      `home.jackd.org`.
 - [ ] Set as browser homepage / new-tab page; on iOS, "Add to Home Screen" for an
       app-like launcher.
 
@@ -98,5 +108,5 @@ If extending this, please keep the things that define it:
 
 ## Running locally
 
-It's a static file: open `quiet-home.html` in any browser, or serve the folder with
+It's a static file: open `index.html` in any browser, or serve the folder with
 anything (e.g. `python3 -m http.server`). No setup required.
