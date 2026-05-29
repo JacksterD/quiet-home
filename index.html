@@ -497,20 +497,38 @@
     chatgpt: "gpt", openai: "gpt"
   };
 
+  // Does this look like a web address (rather than something to search)?
+  // Any whitespace means it's a search; otherwise an explicit http(s):// or a
+  // bare host like example.com / sub.example.co.uk[:port][/path] counts as a URL.
+  function looksLikeUrl(s) {
+    if (/\s/.test(s)) return false;
+    if (/^https?:\/\//i.test(s)) return true;
+    return /^[a-z0-9-]+(\.[a-z0-9-]+)+(:\d+)?(\/.*)?$/i.test(s);
+  }
+
   document.getElementById("search").addEventListener("keydown", function (e) {
     if (e.key !== "Enter") return;
-    let q = e.target.value.trim();
+    const q = e.target.value.trim();
     if (!q) return;
 
-    // resolve a leading "!token" to an engine; otherwise keep the default
-    let target = config.searchUrl;
+    // 1. Bangs win: "!gpt …" always routes that one query to the named engine.
     const m = q.match(/^!(\S+)\s*([\s\S]*)$/);
     if (m) {
       const key = BANG_ALIASES[m[1].toLowerCase()] || m[1].toLowerCase();
-      if (BANGS[key]) { target = BANGS[key]; q = m[2].trim(); }
+      if (BANGS[key]) {
+        window.location.href = BANGS[key] + encodeURIComponent(m[2].trim());
+        return;
+      }
     }
 
-    window.location.href = target + encodeURIComponent(q);
+    // 2. A bare address goes straight there (adding https:// if it's missing).
+    if (looksLikeUrl(q)) {
+      window.location.href = /^https?:\/\//i.test(q) ? q : "https://" + q;
+      return;
+    }
+
+    // 3. Otherwise, a normal search with the chosen engine.
+    window.location.href = config.searchUrl + encodeURIComponent(q);
   });
 
   // ---- Settings panel ------------------------------------------------------
@@ -569,6 +587,11 @@
   // ---- Go ------------------------------------------------------------------
   renderAll();
   setInterval(renderClock, 15000); // refresh the minute, no anxious ticking seconds
+
+  // Land ready to type: focus the search field on load so you can enter a
+  // URL or query straight away. (A page can't focus the browser's own address
+  // bar — that's reserved to the browser — so this is the in-page equivalent.)
+  document.getElementById("search").focus();
 </script>
 </body>
 </html>

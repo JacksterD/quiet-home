@@ -32,7 +32,11 @@ better") and a dark, Farrow & Ball-ish palette.
   midnight), personalised with the user's name.
 - **Quiet search** — a minimal underline field that submits to a chosen engine.
   Privacy-respecting options included: DuckDuckGo (default), Kagi, Startpage,
-  Brave, Ecosia, and Google.
+  Brave, Ecosia, and Google. The field is **focused on load** (so you can type
+  immediately) and is **URL-aware**: type a bare web address like `github.com`
+  and Enter goes straight there, while anything with spaces (or no domain) is
+  searched. Note: a web page cannot focus the *browser's* address bar — that's
+  reserved to the browser — so focusing this field is the in-page equivalent.
 - **Bang routing** — prefix a single query with a `!bang` to send just that one
   query somewhere other than your default, without changing the default. No bang
   (or an unrecognised one) falls through to the chosen engine. Supported:
@@ -124,7 +128,6 @@ loads directly at the subdomain with no path suffix.
 - **Config export/import** (copy a JSON blob, or a URL-encoded config) to move a
   setup between devices without retyping — the cleanest answer to the per-device
   `localStorage` limitation.
-- **Auto-focus the search field** on load for keyboard-first use.
 - A small **keyboard shortcut** to open the edit panel.
 
 ## Running locally
