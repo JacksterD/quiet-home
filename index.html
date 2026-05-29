@@ -8,6 +8,14 @@
      as an SVG data URI so there's no extra file and no network request. The hex
      mirrors --bg (#14201f) and --brass (#c6a15b). -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2314201f'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23c6a15b'/%3E%3C/svg%3E">
+<!-- Apply the saved palette before first paint, so a light theme doesn't
+     flash dark on load. Mirrors STORE_KEY/config.theme used by the main script. -->
+<script>
+  try {
+    var saved = JSON.parse(localStorage.getItem("quiet_home_v1") || "{}");
+    if (saved.theme) document.documentElement.setAttribute("data-theme", saved.theme);
+  } catch (e) {}
+</script>
 <style>
   /* ---------------------------------------------------------------
      Quiet Home — a calm browser homepage.
@@ -16,10 +24,14 @@
      browser only. Nothing leaves the device.
 
      Palette is borrowed from the deep Farrow & Ball end of things —
-     an Inchyra/Hague near-black with a warm brass accent.
+     an Inchyra/Hague near-black with a warm brass accent. Three quiet
+     palettes are offered (Night / Day / Ember); each keeps the single
+     brass-family accent. The chosen one is set as data-theme on <html>
+     and only swaps these CSS variables — nothing else changes.
   ----------------------------------------------------------------*/
 
   :root {
+    /* Night — the default: deep blue-green near-black + brass */
     --bg:        #14201f;   /* deep blue-green, near black */
     --bg-deep:   #0d1716;   /* used for the vignette edges */
     --ink:       #e8e2d4;   /* warm off-white text */
@@ -29,6 +41,29 @@
     --line:      rgba(198,161,91,0.22);
     --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Hoefler Text", Georgia, serif;
     --mono:  "SF Mono", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+
+  /* Day — warm paper/parchment with a deep studio-green ink, brass kept
+     a touch deeper so it holds contrast on a light ground. */
+  html[data-theme="day"] {
+    --bg:        #ece5d6;
+    --bg-deep:   #ddd4c1;
+    --ink:       #2b3a32;
+    --ink-soft:  #5d665e;
+    --ink-faint: #8a9285;
+    --brass:     #9c7a2e;
+    --line:      rgba(156,122,46,0.32);
+  }
+
+  /* Ember — a cozy warm-dark evening variant: brown-aubergine + amber. */
+  html[data-theme="ember"] {
+    --bg:        #21181a;
+    --bg-deep:   #160f11;
+    --ink:       #ece1d6;
+    --ink-soft:  #a89a8f;
+    --ink-faint: #6b5d55;
+    --brass:     #cf9d63;
+    --line:      rgba(207,157,99,0.24);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,6 +76,8 @@
     font-family: var(--serif);
     /* a soft vignette gives the page some depth and quiet */
     background-image: radial-gradient(120% 90% at 50% 35%, var(--bg) 0%, var(--bg-deep) 100%);
+    /* ease text/background when the palette is switched, so it settles quietly */
+    transition: background-color 0.5s ease, color 0.5s ease;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -292,6 +329,16 @@
       </div>
 
       <div class="field">
+        <span class="label">Palette</span>
+        <select id="setTheme">
+          <option value="night">Night — deep blue-green</option>
+          <option value="day">Day — warm paper</option>
+          <option value="ember">Ember — warm dark</option>
+        </select>
+        <div class="hint">A quiet colour shift. Previewed as you choose; Cancel keeps the old one.</div>
+      </div>
+
+      <div class="field">
         <span class="label">Your web</span>
         <textarea id="setLinks" spellcheck="false"></textarea>
         <div class="hint">One per line, as &nbsp;Name | https://url</div>
@@ -319,6 +366,7 @@
   const defaults = {
     name: "Jack",
     searchUrl: "https://duckduckgo.com/?q=",
+    theme: "night",   // night (default) | day | ember
     links: [
       { name: "Mail",     url: "https://mail.google.com" },
       { name: "Calendar", url: "https://calendar.google.com" },
@@ -409,7 +457,15 @@
     }
   }
 
+  // Apply a palette by setting data-theme on <html>; the CSS does the rest.
+  // Unknown values fall back to Night, so old or hand-edited configs stay safe.
+  function applyTheme(theme) {
+    const t = (theme === "day" || theme === "ember") ? theme : "night";
+    document.documentElement.setAttribute("data-theme", t);
+  }
+
   function renderAll() {
+    applyTheme(config.theme);
     renderClock();
     renderGreeting();
     renderLinks();
@@ -475,11 +531,22 @@
   function openPanel() {
     document.getElementById("setName").value = config.name;
     document.getElementById("setSearch").value = config.searchUrl;
+    document.getElementById("setTheme").value = config.theme;
     document.getElementById("setLinks").value = linksToText(config.links);
     document.getElementById("setNotes").value = config.notes.join("\n");
     panel.classList.add("open");
   }
-  function closePanel() { panel.classList.remove("open"); }
+  // Closing without saving reverts any live palette preview to the saved one.
+  function closePanel() {
+    applyTheme(config.theme);
+    panel.classList.remove("open");
+  }
+
+  // Preview the palette live as it's picked — the page behind the panel shifts,
+  // so you see the choice before committing. Cancel/Escape restore the old one.
+  document.getElementById("setTheme").addEventListener("change", function (e) {
+    applyTheme(e.target.value);
+  });
 
   document.getElementById("editToggle").addEventListener("click", openPanel);
   document.getElementById("cancelBtn").addEventListener("click", closePanel);
@@ -487,6 +554,7 @@
   document.getElementById("saveBtn").addEventListener("click", function () {
     config.name = document.getElementById("setName").value.trim();
     config.searchUrl = document.getElementById("setSearch").value;
+    config.theme = document.getElementById("setTheme").value;
     config.links = textToLinks(document.getElementById("setLinks").value);
     config.notes = document.getElementById("setNotes").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
     saveConfig(config);
