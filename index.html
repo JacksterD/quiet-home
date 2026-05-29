@@ -433,20 +433,50 @@
   ];
 
   // Places worth a wander — the quieter, human end of the web. Shown in the
-  // "explore" overlay. Baked in; edit here by hand.
-  const EXPLORE_LINKS = [
-    { name: "Marginalia",          url: "https://search.marginalia.nu",      desc: "A search engine for the quiet, non-commercial web." },
-    { name: "Wiby",                url: "https://wiby.me",                    desc: "Finds classic, simple pages made by people, not companies." },
-    { name: "Kagi Small Web",      url: "https://kagi.com/smallweb",          desc: "Fresh posts from personal blogs and the small web." },
-    { name: "Internet Archive",    url: "https://archive.org",                desc: "Millions of free books, films, programs, and saved web pages." },
-    { name: "Project Gutenberg",   url: "https://www.gutenberg.org",          desc: "Over 70,000 free ebooks, out of copyright." },
-    { name: "The Public Domain Review", url: "https://publicdomainreview.org", desc: "Curiosities and artworks from the public domain." },
-    { name: "The Marginalian",     url: "https://www.themarginalian.org",     desc: "Maria Popova on art, science, and how to live." },
-    { name: "Low-tech Magazine",   url: "https://solar.lowtechmagazine.com",  desc: "A solar-powered magazine on sustainable technology." },
-    { name: "Are.na",              url: "https://www.are.na",                 desc: "Calm, ad-free visual research and collecting." },
-    { name: "Neocities",           url: "https://neocities.org",              desc: "Make a personal website, in the spirit of the early web." },
-    { name: "Gwern",               url: "https://gwern.net",                  desc: "Long-form, long-term essays on science and technology." },
-    { name: "Wikipedia",           url: "https://en.wikipedia.org",           desc: "The free encyclopedia." }
+  // "explore" overlay, sorted into a handful of calm categories. Baked in;
+  // edit (or add a group) here by hand.
+  const EXPLORE_GROUPS = [
+    { title: "Search the smaller web", links: [
+      { name: "Marginalia",      url: "https://search.marginalia.nu",      desc: "A search engine for the quiet, non-commercial web." },
+      { name: "Wiby",            url: "https://wiby.me",                    desc: "Finds classic, simple pages made by people, not companies." },
+      { name: "Kagi Small Web",  url: "https://kagi.com/smallweb",          desc: "Fresh posts from personal blogs and the small web." }
+    ]},
+    { title: "Reading & ideas", links: [
+      { name: "Aeon",            url: "https://aeon.co",                    desc: "Long, ad-light essays on big ideas — philosophy, science, life." },
+      { name: "Nautilus",        url: "https://nautil.us",                  desc: "Science writing that reads like literature." },
+      { name: "Quanta Magazine", url: "https://www.quantamagazine.org",     desc: "Beautiful journalism on math, physics, and biology." },
+      { name: "Read Something Wonderful", url: "https://readsomethingwonderful.com", desc: "A hand-picked library of the internet's best essays." },
+      { name: "The Marginalian", url: "https://www.themarginalian.org",     desc: "Maria Popova on art, science, and how to live." },
+      { name: "Gwern",           url: "https://gwern.net",                  desc: "Long-form, long-term essays on science and technology." },
+      { name: "Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu", desc: "Rigorous, free, and surprisingly readable." }
+    ]},
+    { title: "Books & archives", links: [
+      { name: "Internet Archive", url: "https://archive.org",               desc: "Millions of free books, films, programs, and saved web pages." },
+      { name: "Project Gutenberg", url: "https://www.gutenberg.org",        desc: "Over 70,000 free ebooks, out of copyright." },
+      { name: "Standard Ebooks",  url: "https://standardebooks.org",        desc: "Lovingly typeset, free public-domain books." },
+      { name: "Open Library",     url: "https://openlibrary.org",           desc: "Borrow digital books, one web page per book." },
+      { name: "LibriVox",         url: "https://librivox.org",              desc: "Free public-domain audiobooks, read by volunteers." },
+      { name: "Wikipedia",        url: "https://en.wikipedia.org",          desc: "The free encyclopedia." }
+    ]},
+    { title: "Art, culture & wonder", links: [
+      { name: "The Public Domain Review", url: "https://publicdomainreview.org", desc: "Curiosities and artworks from the public domain." },
+      { name: "Open Culture",     url: "https://www.openculture.com",       desc: "Free films, courses, books, and cultural media." },
+      { name: "WikiArt",          url: "https://www.wikiart.org",           desc: "A visual encyclopedia of the world's art." },
+      { name: "Atlas Obscura",    url: "https://www.atlasobscura.com",      desc: "The world's hidden wonders and curious places." },
+      { name: "Letters of Note",  url: "https://lettersofnote.com",         desc: "Correspondence deserving a wider audience." },
+      { name: "Poetry Foundation", url: "https://www.poetryfoundation.org", desc: "A vast, searchable archive of poems." }
+    ]},
+    { title: "Make & tinker", links: [
+      { name: "Neocities",        url: "https://neocities.org",             desc: "Make a personal website, in the spirit of the early web." },
+      { name: "Are.na",           url: "https://www.are.na",                desc: "Calm, ad-free visual research and collecting." },
+      { name: "Low-tech Magazine", url: "https://solar.lowtechmagazine.com", desc: "A solar-powered magazine on sustainable technology." }
+    ]},
+    { title: "Quiet corners", links: [
+      { name: "Window Swap",      url: "https://www.window-swap.com",       desc: "Look out of a stranger's window, anywhere on Earth." },
+      { name: "Radio Garden",     url: "https://radio.garden",              desc: "Spin the globe and listen to live local radio." },
+      { name: "NASA APOD",        url: "https://apod.nasa.gov",             desc: "One image of the cosmos a day, since 1995." },
+      { name: "Our World in Data", url: "https://ourworldindata.org",       desc: "Calm, careful charts on how the world is changing." }
+    ]}
   ];
 
   // ---- Render --------------------------------------------------------------
