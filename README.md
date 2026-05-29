@@ -49,11 +49,9 @@ better") and a dark, Farrow & Ball-ish palette.
   was trialled but removed: Claude.ai now shows a session-hijack warning on any
   externally-supplied `?q=` prefill — a deliberate anti-prompt-injection measure —
   which makes it a poor fit for a one-keystroke launcher.)
-- **Curated links** — text links ("your web"), no icons. A single centered line
-  (middot-separated) is always shown; a quiet "more" toggle eases the rest open on
-  one further line, collapsed by default. No labels — just the links. They are
-  baked into the file (the `PRIMARY_LINKS` and `MORE_LINKS` arrays near the top of
-  the `<script>`) and edited there by hand, not from the edit panel.
+- **Curated links** — a single quiet centered line of text links ("your web"),
+  middot-separated, no icons and no labels. Baked into the file (the `LINKS` array
+  near the top of the `<script>`) and edited there by hand, not from the edit panel.
 - **Rotating quotes** — one human, attributed quote shown at random each load. The
   author is rendered as a quiet upright credit after the line. The quotes are baked
   into the file (the `notes` array in `defaults`) and edited there by hand.
@@ -87,15 +85,13 @@ better") and a dark, Farrow & Ball-ish palette.
   does **not** sync edits between, say, a Mac and an iPhone — each browser keeps its
   own copy. The intended pattern for a single canonical setup is therefore to bake
   the real quotes/name straight into the `defaults` object (and the links into
-  `PRIMARY_LINKS`/`MORE_LINKS`) and host that; the edit panel is then optional
-  per-device tinkering.
+  `LINKS`) and host that; the edit panel is then optional per-device tinkering.
 
 ## Current defaults
 
 - **Name:** Jack
 - **Search:** DuckDuckGo (default); also Kagi, Startpage, Brave, Ecosia, Google.
-- **Links:** primary line Calendar · Mail · Notes (always shown); "more" reveals
-  Wikipedia · Internet Archive · Small Web · Weather · Maps · Transport.
+- **Links:** Calendar · Mail · Notes.
 - **Quotes:** nine attributed human quotes (Rams, Mary Oliver, Annie Dillard,
   Georgia O'Keeffe, Dorothea Lange, Thoreau, David Lynch, Tim Berners-Lee,
   Simone Weil).

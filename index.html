@@ -180,31 +180,6 @@
   .links a:hover { color: var(--ink); }
   .links a:hover::after { right: 0; }
 
-  /* the quiet "more" toggle, kept low-key like the edit affordance */
-  .more-toggle {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 2px 6px;
-    opacity: 0.7;
-    transition: opacity 0.3s ease, color 0.3s ease;
-  }
-  .more-toggle:hover { opacity: 1; color: var(--brass); }
-
-  /* the revealed row: collapsed by default, easing open on request */
-  .more-links {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 0.45s ease, opacity 0.35s ease;
-  }
-  .more-links.open { max-height: 120px; opacity: 1; }
-
   /* ---- footer: a single quiet line, not a feed ---- */
   .footer-line {
     position: fixed;
@@ -415,20 +390,11 @@
 
   // ---- Links ---------------------------------------------------------------
   // Baked in (not edited via the panel): a small set of doors you walk through
-  // on purpose. The primary row is always shown; a quiet "more" reveals the rest
-  // on one further line. Edit these by hand, right here.
-  const PRIMARY_LINKS = [
+  // on purpose, shown as one quiet centered line. Edit these by hand, right here.
+  const LINKS = [
     { name: "Calendar", url: "https://calendar.google.com" },
     { name: "Mail",     url: "https://mail.google.com" },
     { name: "Notes",    url: "https://notes.icloud.com" }
-  ];
-  const MORE_LINKS = [
-    { name: "Wikipedia",        url: "https://en.wikipedia.org" },
-    { name: "Internet Archive", url: "https://archive.org" },
-    { name: "Small Web",        url: "https://search.marginalia.nu" },
-    { name: "Weather",          url: "https://www.bbc.co.uk/weather" },
-    { name: "Maps",             url: "https://www.google.com/maps" },
-    { name: "Transport",        url: "https://www.realtimetrains.co.uk" }
   ];
 
   // ---- Render --------------------------------------------------------------
@@ -479,26 +445,7 @@
   function renderLinks() {
     const nav = document.getElementById("links");
     nav.innerHTML = "";
-
-    // the primary line is always shown
-    nav.appendChild(linkRow(PRIMARY_LINKS));
-    if (!MORE_LINKS.length) return;
-
-    // a quiet toggle eases the rest open on one further line (collapsed by default)
-    const toggle = document.createElement("button");
-    toggle.className = "more-toggle";
-    toggle.textContent = "more";
-    nav.appendChild(toggle);
-
-    const more = document.createElement("div");
-    more.className = "more-links";
-    more.appendChild(linkRow(MORE_LINKS));
-    nav.appendChild(more);
-
-    toggle.addEventListener("click", function () {
-      const open = more.classList.toggle("open");
-      toggle.textContent = open ? "less" : "more";
-    });
+    nav.appendChild(linkRow(LINKS));
   }
 
   function renderNote() {
