@@ -54,8 +54,14 @@ better") and a dark, Farrow & Ball-ish palette.
 
 ## Design language
 
-- **Palette:** a deep blue-green near-black (Farrow & Ball Inchyra/Hague territory)
-  with a single warm brass accent. Defined as CSS variables at the top of the file.
+- **Palette:** three quiet, switchable palettes, each defined as CSS variables at
+  the top of the file and keeping a single warm brass-family accent:
+  **Night** (a deep blue-green near-black, Farrow & Ball Inchyra/Hague territory —
+  the default), **Day** (a warm paper/parchment light mode with deep studio-green
+  ink), and **Ember** (a cozy warm-dark evening variant). The choice is set as
+  `data-theme` on `<html>`, swaps only the colour variables, is remembered in the
+  config, and is applied before first paint so a light theme never flashes dark.
+  Pick it from the edit panel (it previews live as you choose).
 - **Type:** a system serif stack ("Iowan Old Style"/Palatino/Georgia) for the
   greeting and quotes; a system mono ("SF Mono"/ui-monospace) for the small
   letter-spaced labels and clock. No fonts are downloaded — on Apple devices this
@@ -118,7 +124,6 @@ loads directly at the subdomain with no path suffix.
 - **Config export/import** (copy a JSON blob, or a URL-encoded config) to move a
   setup between devices without retyping — the cleanest answer to the per-device
   `localStorage` limitation.
-- **Light/dark or seasonal palette variants** via a CSS variable swap.
 - **Auto-focus the search field** on load for keyboard-first use.
 - A small **keyboard shortcut** to open the edit panel.
 
