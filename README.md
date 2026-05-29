@@ -32,12 +32,15 @@ better") and a dark, Farrow & Ball-ish palette.
 - **Bang routing** — prefix a single query with a `!bang` to send just that one
   query somewhere other than your default, without changing the default. No bang
   (or an unrecognised one) falls through to the chosen engine. Supported:
-  `!ddg`, `!kagi`, `!sp`, `!brave`, `!e`, `!g`, plus AI: `!gpt` (ChatGPT) and
-  `!claude`. Each bang is just a URL prefix the query is appended to — a plain
-  navigation, no API calls or keys, so the zero-network model is preserved. Note
-  that, like any search, the query text does travel to whichever provider you
-  send it to (and AI vendors may handle prompts differently from a privacy search
-  engine), so routing to AI is a deliberate, per-query choice — which is the point.
+  `!ddg`, `!kagi`, `!sp`, `!brave`, `!e`, `!g`, plus AI: `!gpt` (ChatGPT). Each
+  bang is just a URL prefix the query is appended to — a plain navigation, no API
+  calls or keys, so the zero-network model is preserved. Note that, like any
+  search, the query text does travel to whichever provider you send it to (and AI
+  vendors may handle prompts differently from a privacy search engine), so routing
+  to AI is a deliberate, per-query choice — which is the point. (A `!claude` bang
+  was trialled but removed: Claude.ai now shows a session-hijack warning on any
+  externally-supplied `?q=` prefill — a deliberate anti-prompt-injection measure —
+  which makes it a poor fit for a one-keystroke launcher.)
 - **Curated links** — a small row of text links ("your web"), no icons.
 - **Rotating quotes** — one human, attributed quote shown at random each load. The
   author is rendered as a quiet upright credit after the line.

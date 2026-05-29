@@ -284,7 +284,7 @@
           <option value="https://www.ecosia.org/search?q=">Ecosia</option>
           <option value="https://www.google.com/search?q=">Google</option>
         </select>
-        <div class="hint">Default for a plain search. Or start a query with a bang to route just that one: !ddg !kagi !sp !brave !e !g · !gpt (ChatGPT) · !claude</div>
+        <div class="hint">Default for a plain search. Or start a query with a bang to route just that one: !ddg !kagi !sp !brave !e !g · !gpt (ChatGPT)</div>
       </div>
 
       <div class="field">
@@ -414,7 +414,7 @@
 
   // ---- Search --------------------------------------------------------------
   // "Bangs": start a query with !token to send just that one query elsewhere
-  // (e.g. "!claude explain entropy"). No bang, or an unknown one, falls back to
+  // (e.g. "!gpt explain entropy"). No bang, or an unknown one, falls back to
   // your chosen default engine. Each is a plain URL prefix the query is appended
   // to — no API calls, no keys; just a navigation, exactly like the default.
   const BANGS = {
@@ -424,8 +424,7 @@
     brave:  "https://search.brave.com/search?q=",
     ecosia: "https://www.ecosia.org/search?q=",
     google: "https://www.google.com/search?q=",
-    gpt:    "https://chatgpt.com/?q=",
-    claude: "https://claude.ai/new?q="
+    gpt:    "https://chatgpt.com/?q="
   };
   // a few friendly aliases so the obvious thing works
   const BANG_ALIASES = {
@@ -435,8 +434,7 @@
     b: "brave",
     e: "ecosia",
     g: "google",
-    chatgpt: "gpt", openai: "gpt",
-    c: "claude", anthropic: "claude"
+    chatgpt: "gpt", openai: "gpt"
   };
 
   document.getElementById("search").addEventListener("keydown", function (e) {
